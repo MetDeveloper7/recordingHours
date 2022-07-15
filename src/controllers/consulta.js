@@ -17,11 +17,11 @@ const getData = async (req, res) => {
 
 const createRecording = async (req, res) => {
     console.log("llegaaa");
-    console.log(req.body.data);
-    const {name, filetype, chn, starttime, endtime, minutos} = req.body.data;
-    const response = await pool.query('INSERT INTO public.recordign_hours (name, filetype, chn, starttime, endtime, minutos) VALUES ($1, $2, $3, $4, $5, $6)', [name, filetype, chn, starttime, endtime, minutos]);
+    console.log(req.body);
+    const {name, filetype, chn, starttime, endtime, minutos, terid} = req.body;
+    const response = await pool.query('INSERT INTO public.recordign_hours (name, filetype, chn, starttime, endtime, minutos, terid) VALUES ($1, $2, $3, $4, $5, $6, $7)', [name, filetype, chn, starttime, endtime, minutos, terid]);
     console.log(response);
-    res.send('RecordingHours create');
+    res.status(200).json({status: 200, message: 'Bien'})
 };
 
 module.exports = {
