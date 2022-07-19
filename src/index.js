@@ -4,7 +4,7 @@ const app = express();
 const cron = require('node-cron');
 
 
-const { getData } = require('./controllers/consulta')
+const { getData, getVehicles, createRecordingVehicles } = require('./controllers/consulta')
 
 
 app.use(express.json());
@@ -19,8 +19,25 @@ console.log(`Server on port 3000`);
 
 
 
-cron.schedule('* * * * * *', () => {
-  getData()
-  console.log('running every minute 1, 2, 4 and 5');
-
+cron.schedule('* * * * * *', async () => {
+  const registros = await getData()
+  const vehiculos = await getVehicles()
+  vehiculos.map(item => {
+    const finVehicle = []
+    let registroEncontrado = null
+    registros.map(registro => {
+      if (!(item.work_mvr == registro.terid)) {
+        finVehicle.push(false)
+      } else {
+        finVehicle.push(true)
+        registroEncontrado = registro
+      }
+    })
+    const resultado = finVehicle.includes(true)
+    if(resultado){
+      console.log(registroEncontrado)
+    }else{
+      console.log(item);
+    }
+  })
 });
