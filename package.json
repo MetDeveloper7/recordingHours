@@ -4,15 +4,18 @@
   "description": "guardar grabacion en BD",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node ./src/index.js"
   },
   "author": "desarrollador7",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.18.1",
+    "node-cron": "^3.0.1",
     "pg": "^8.7.3",
-    "pg-promise": "^10.11.1"
+    "pg-promise": "^10.11.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.19"

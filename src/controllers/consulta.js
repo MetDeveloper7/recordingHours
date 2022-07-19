@@ -10,9 +10,13 @@ const pool = new Pool({
 });
 
 const getData = async (req, res) => {
-    const response = await pool.query('SELECT * FROM public.recordign_hours');
+
+    const response = await pool.query("SELECT terid, max(endtime) FROM public.recordign_hours GROUP BY terid")
+
     console.log(response.rows);
-    res.status(200).json(response.rows);
+
+    /* res.status(200).json(response.rows); */
+
 };
 
 const createRecording = async (req, res) => {
