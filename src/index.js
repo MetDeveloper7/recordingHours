@@ -6,7 +6,8 @@ const cron = require('node-cron');
 
 
 
-const { getData, getVehicles, createRecordingVehicles, callAPI, callAPIExit } = require('./controllers/consulta')
+const { getData, getVehicles } = require('./controllers/consulta')
+const { callAPI, callAPIExit } = require('./controllers/ceibaController')
 
 
 app.use(express.json());
@@ -20,25 +21,30 @@ app.listen(3000);
 console.log(`Server on port 3000`);
 
 
-cron.schedule('57 * * * *', async () => {
-  const registros = await getData()
-  const vehiculos = await getVehicles()
-  vehiculos.map(item => {
-    const finVehicle = []
-    let registroEncontrado = null
-    registros.map(registro => {
-      if (!(item.work_mvr == registro.terid)) {
-        finVehicle.push(false)
+cron.schedule('37 * * * * *', async () => {
+  try {
+    const registros = await getData()
+    const vehiculos = await getVehicles()
+    vehiculos.map(item => {
+      const finVehicle = []
+      let registroEncontrado = null
+      registros.map(registro => {
+        if (!(item.work_mvr == registro.terid)) {
+          finVehicle.push(false)
+        } else {
+          finVehicle.push(true)
+          registroEncontrado = registro
+        }
+      })
+      const resultado = finVehicle.includes(true)
+      if (resultado) {
+        callAPIExit(registroEncontrado);
       } else {
-        finVehicle.push(true)
-        registroEncontrado = registro
+        callAPI(item);
       }
     })
-    const resultado = finVehicle.includes(true)
-    if(resultado){
-      callAPIExit(registroEncontrado);
-    }else{
-      callAPI(item);
-    }
-  })
+  } catch (error) {
+    console.log(error);
+  }
+
 });
