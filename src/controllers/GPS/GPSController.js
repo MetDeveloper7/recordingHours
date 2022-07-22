@@ -24,19 +24,18 @@ const calculate = (data) =>{
     const {gpstime, terid } = data;
     let auxEncendido =0;
     let auxApagado=0;
-    const timeDefault = moment(gpstime[0]).startOf("day");
+    const timeDefault = moment(data[0].gpstime).startOf("day");
     const difference = 9.22;
     const entryHour = moment(timeDefault, 'YYYY-MM-DD HH:mm:ss');
-    const exitHour = moment(gpstime[0], 'YYYY-MM-DD HH:mm:ss');
-    let duration = moment.duration(exitHour.diff(entryHour)).asMinutes();
-    for (let i=1; i<gpstime.length; i++) { 
-        const fecha1 = moment(i, 'YYYY-MM-DD HH:mm:ss');
-        const fecha2 = duration;
-        let minutes = fecha1-fecha2;
-        duration = minutes;
-        console.log(minutes);
-        console.log("duration", duration);
-        if (minutes > 0 && minutes <=difference) {
+    const exitHour = moment(data[0].gpstime, 'YYYY-MM-DD HH:mm:ss');
+    let minutesFirst = moment.duration(exitHour.diff(entryHour)).asSeconds();
+    console.log(minutesFirst);
+    for (let i=1; i<data.length; i++) {
+        const fecha1 = moment(data[i].gpstime, 'ss').format('ss');
+        const fecha2 = moment(minutesFirst, 'ss').format('ss');
+        console.log(fecha1,fecha2);
+        //duration = minutes;
+        /* if (minutes > 0 && minutes <=difference) {
             auxEncendido += duration; 
             console.log("ENCENDIDO");
         }
@@ -45,7 +44,8 @@ const calculate = (data) =>{
             console.log("APAGADO");
         }
     }    
-    createReport(gpstime, terid, auxEncendido, auxApagado, auxEncendido+auxApagado);
+    createReport(gpstime, terid, auxEncendido, auxApagado, auxEncendido+auxApagado); */
+    }
 };
 
 const createReport = async (gpstime, terid, encendido, apagado, total) => {
