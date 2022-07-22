@@ -8,6 +8,7 @@ const cron = require('node-cron');
 
 const { getData, getVehicles } = require('./controllers/consulta')
 const { callAPI, callAPIExit } = require('./controllers/ceibaController')
+const { getGPS, calculate } = require('./controllers/GPS/GPSController')
 
 
 app.use(express.json());
@@ -21,7 +22,7 @@ app.listen(3000);
 console.log(`Server on port 3000`);
 
 
-cron.schedule('37 * * * * *', async () => {
+/* cron.schedule('37 * * * * *', async () => {
   try {
     const registros = await getData()
     const vehiculos = await getVehicles()
@@ -47,4 +48,6 @@ cron.schedule('37 * * * * *', async () => {
     console.log(error);
   }
 
-});
+}); */
+
+getGPS();

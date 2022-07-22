@@ -32,7 +32,7 @@ const callAPI = async (data) => {
 const callAPIExit = async (data) => {
     try {
         const { terid } = data
-        //no se puede usar la ultima que nos proporciona la base de datos, ya que el startime todo pot default el dia, es decir, no tendriamos registros nuevos
+        //no se puede usar la ultima que nos proporciona la base de datos, ya que el startime todo por default el dia, es decir, no tendriamos registros nuevos
         const endtimeDefault = moment().format("YYYY-MM-DD HH:mm:ss");
         const startTime = moment().startOf("day").format("YYYY-MM-DD HH:mm:ss")
         let params = {
