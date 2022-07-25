@@ -22,7 +22,7 @@ app.listen(3000);
 console.log(`Server on port 3000`);
 
 
-/* cron.schedule('37 * * * * *', async () => {
+cron.schedule('15 * * * * *', async () => {
   try {
     const registros = await getData()
     const vehiculos = await getVehicles()
@@ -43,11 +43,13 @@ console.log(`Server on port 3000`);
       } else {
         callAPI(item);
       }
+      registroEncontrado = null
     })
   } catch (error) {
     console.log(error);
   }
 
-}); */
+});
 
-getGPS();
+
+//getGPS();

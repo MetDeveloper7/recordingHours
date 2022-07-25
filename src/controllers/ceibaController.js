@@ -1,14 +1,13 @@
 const moment = require('moment');
-const axio = require('axios');
-const { pool } = require('../config/database')
+const { getHoursTerid } = require('../config/services/hours')
+const { pool } = require('../config/database');
 
-const url = 'http://67.231.248.74:12056/api/v1/basic/record/filelist'
 
 const callAPI = async (data) => {
     try {
         const { work_mvr } = data
         const starttimeDefault = '2022-06-01 00:00:00'
-        const endtimeDefault = moment().format("YYYY-MM-DD HH:mm:ss");
+        const endtimeDefault = moment().endOf("day").format("YYYY-MM-DD HH:mm:ss");
         let params = {
             key: 'zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D',
             terid: work_mvr,
@@ -18,37 +17,49 @@ const callAPI = async (data) => {
             ft: '0',
             st: '1'
         }
-        axio.get(url, { params }).then(response => {
-            if (response.data.data.length > 0) {
-                createRecordingAPI(response.data.data, work_mvr)
-            }
-        });
+        const datosTerid = await horasApi.get('basic/record/filelist', { params })
+
+
+        if (datosTerid.data.data.length > 0) {
+            createRecordingAPI(datosTerid.data.data, work_mvr)
+        }
     } catch (error) {
-        console.log(error);
+        console.log('Tiempo acabado por registro nuevo', data.work_mvr);
     }
 
 };
 
 const callAPIExit = async (data) => {
     try {
-        const { terid } = data
-        //no se puede usar la ultima que nos proporciona la base de datos, ya que el startime todo por default el dia, es decir, no tendriamos registros nuevos
-        const endtimeDefault = moment().format("YYYY-MM-DD HH:mm:ss");
-        const startTime = moment().startOf("day").format("YYYY-MM-DD HH:mm:ss")
-        let params = {
-            key: 'zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D',
-            terid: terid,
-            starttime: startTime,
-            endtime: endtimeDefault,
-            chl: '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16',
-            ft: '0',
-            st: '1'
-        }
-        axio.get(url, { params }).then(response => {
-            if (response.data.data.length > 0) {
-                createRecordingAPI(response.data.data, terid)
+        const { terid, max } = data
+
+        const formatString = "YYYY-MM-DD HH:mm:ss"
+
+        const maxBaseDatos = moment(max).format(formatString)
+
+        const endtimeDefault = moment().endOf('day').format(formatString);
+
+        //si la fecha es menor a la actual este sumara un dia
+        if (maxBaseDatos <= endtimeDefault) {
+            const dayParam = moment(max).startOf('day').add('1', 'days').format(formatString)
+            let params = {
+                key: 'zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D',
+                terid: terid,
+                starttime: dayParam,
+                endtime: endtimeDefault,
+                chl: '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16',
+                ft: '0',
+                st: '1'
             }
-        });
+            const noSirve = await getHoursTerid(params)
+
+            //me traen datos incorrectos (datos de otro terid)
+            console.log(noSirve, terid);
+
+            //enviar los datos de los dispositivos para guardar en la base de datos
+            //createRecordingAPI(noSirve)
+        }
+
     } catch (error) {
         console.log(error);
     }
@@ -58,20 +69,22 @@ const callAPIExit = async (data) => {
 
 const createRecordingAPI = async (data, terid) => {
     try {
-        for (const teridRegister of data) {
 
-            const { name, filetype, chn, starttime, endtime } = teridRegister;
+        console.log(data, terid);
+        /* for (const teridRegister of data) {
+
+            const { starttime, endtime } = teridRegister;
             const fecha1 = moment(starttime, "YYYY-MM-DD HH:mm:ss");
             const fecha2 = moment(endtime, "YYYY-MM-DD HH:mm:ss")
             let minutos = fecha2.diff(fecha1, 'minutes');
 
-            /* console.log({...teridRegister, minutos, terid}); */
-            const response = await pool.query('INSERT INTO public.recordign_hours (name, filetype, chn, starttime, endtime, minutos, terid) VALUES ($1, $2, $3, $4, $5, $6, $7)', [name, filetype, chn, starttime, endtime, minutos, terid]); 
+            console.log({...teridRegister, minutos, terid: data.terid});
+        } */
+        /* await pool.query('INSERT INTO public.recordign_hours (name, filetype, chn, starttime, endtime, minutos, terid) VALUES ($1, $2, $3, $4, $5, $6, $7)', [name, filetype, chn, starttime, endtime, minutos, terid]); */
 
-            //console.log({ ...teridRegister, terid });
-        }
+        //console.log(`El Proceso para ${terid} terminó`);
     } catch (error) {
-        console.log(error);
+        console.log('Tiempo acabado', data.terid);
     }
 
 
