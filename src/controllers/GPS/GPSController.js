@@ -27,8 +27,8 @@ const calculate = (data) =>{
     let auxApagado=0;
     const difference = 9.22*60;
     for (let i=1; i< data.length ; i++) {
-        gpstime = moment(data[i].gpstime).format("YYYY-MM-DD");
-        terid = data[i].terid;
+        gpstime = moment(data[1].gpstime).format("YYYY-MM-DD");
+        terid = data[1].terid;
         const fecha1 = (moment(data[i].gpstime, 'YYYY-MM-DD HH:mm:ss').get('hour')*60*60 + moment(data[i].gpstime, 'YYYY-MM-DD HH:mm:ss').get('minutes')*60 + moment(data[i].gpstime, 'YYYY-MM-DD HH:mm:ss').get('seconds'));
         const fecha2 = (moment(data[i-1].gpstime, 'YYYY-MM-DD HH:mm:ss').get('hour')*60*60 + moment(data[i-1].gpstime, 'YYYY-MM-DD HH:mm:ss').get('minutes')*60 + moment(data[i-1].gpstime, 'YYYY-MM-DD HH:mm:ss').get('seconds'));
         let minutes = fecha1 - fecha2;
