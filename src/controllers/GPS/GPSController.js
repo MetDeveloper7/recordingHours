@@ -42,8 +42,8 @@ const calculate = (data) =>{
             //console.log("APAGADO");
         }
     }
-    console.log((auxEncendido/3600),(auxApagado/3600), ((auxEncendido+auxApagado)/3600)); 
-    createReport(gpstime, terid, (auxEncendido/3600),(auxApagado/3600), ((auxEncendido+auxApagado)/3600));
+    console.log((auxEncendido/3600).toFixed(2),(auxApagado/3600).toFixed(2), ((auxEncendido+auxApagado)/3600).toFixed(2)); 
+    createReport(gpstime, terid, (auxEncendido/3600).toFixed(2),(auxApagado/3600).toFixed(2), ((auxEncendido+auxApagado)/3600).toFixed(2));
     };
 
 const createReport = async (gpstime, terid, encendido, apagado, total) => {
