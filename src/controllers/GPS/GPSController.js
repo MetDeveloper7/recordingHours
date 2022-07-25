@@ -21,32 +21,30 @@ const getGPS = async () => {
 };
 
 const calculate = (data) =>{
-    const {gpstime, terid } = data;
+    let gpstime = ''; 
+    let terid = '';
     let auxEncendido =0;
     let auxApagado=0;
-    const timeDefault = moment(data[0].gpstime).startOf("day");
-    const difference = 9.22;
-    const entryHour = moment(timeDefault, 'YYYY-MM-DD HH:mm:ss');
-    const exitHour = moment(data[0].gpstime, 'YYYY-MM-DD HH:mm:ss');
-    let minutesFirst = moment.duration(exitHour.diff(entryHour)).asSeconds();
-    console.log(minutesFirst);
-    for (let i=1; i<data.length; i++) {
-        const fecha1 = moment(data[i].gpstime, 'ss').format('ss');
-        const fecha2 = moment(minutesFirst, 'ss').format('ss');
-        console.log(fecha1,fecha2);
-        //duration = minutes;
-        /* if (minutes > 0 && minutes <=difference) {
-            auxEncendido += duration; 
-            console.log("ENCENDIDO");
+    const difference = 9.22*60;
+    for (let i=1; i< data.length ; i++) {
+        gpstime = moment(data[i].gpstime).format("YYYY-MM-DD");
+        terid = data[i].terid;
+        const fecha1 = (moment(data[i].gpstime, 'YYYY-MM-DD HH:mm:ss').get('hour')*60*60 + moment(data[i].gpstime, 'YYYY-MM-DD HH:mm:ss').get('minutes')*60 + moment(data[i].gpstime, 'YYYY-MM-DD HH:mm:ss').get('seconds'));
+        const fecha2 = (moment(data[i-1].gpstime, 'YYYY-MM-DD HH:mm:ss').get('hour')*60*60 + moment(data[i-1].gpstime, 'YYYY-MM-DD HH:mm:ss').get('minutes')*60 + moment(data[i-1].gpstime, 'YYYY-MM-DD HH:mm:ss').get('seconds'));
+        let minutes = fecha1 - fecha2;
+        minutesFirst = minutes;
+        if (minutes >= 0 && minutes <=difference) {
+            auxEncendido += minutes; 
+            //console.log("ENCENDIDO");
         }
         else{
-            auxApagado += duration;
-            console.log("APAGADO");
+            auxApagado += minutes;
+            //console.log("APAGADO");
         }
-    }    
-    createReport(gpstime, terid, auxEncendido, auxApagado, auxEncendido+auxApagado); */
     }
-};
+    console.log((auxEncendido/3600),(auxApagado/3600), ((auxEncendido+auxApagado)/3600)); 
+    createReport((auxEncendido/3600),(auxApagado/3600), ((auxEncendido+auxApagado)/3600));
+    };
 
 const createReport = async (gpstime, terid, encendido, apagado, total) => {
     try {
