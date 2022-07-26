@@ -17,12 +17,11 @@ const callAPI = async (data) => {
             ft: '0',
             st: '1'
         }
-        const datosTerid = await horasApi.get('basic/record/filelist', { params })
 
+        return await getHoursTerid(params).then(result => {
+            return { result: result.data, terid: work_mvr }
+        })
 
-        if (datosTerid.data.data.length > 0) {
-            createRecordingAPI(datosTerid.data.data, work_mvr)
-        }
     } catch (error) {
         console.log('Tiempo acabado por registro nuevo', data.work_mvr);
     }
@@ -44,20 +43,16 @@ const callAPIExit = async (data) => {
             const dayParam = moment(max).startOf('day').add('1', 'days').format(formatString)
             let params = {
                 key: 'zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D',
-                terid: terid,
+                terid,
                 starttime: dayParam,
                 endtime: endtimeDefault,
                 chl: '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16',
                 ft: '0',
                 st: '1'
             }
-            const noSirve = await getHoursTerid(params)
-
-            //me traen datos incorrectos (datos de otro terid)
-            console.log(noSirve, terid);
-
-            //enviar los datos de los dispositivos para guardar en la base de datos
-            //createRecordingAPI(noSirve)
+            return await getHoursTerid(params).then(result => {
+                return { result: result.data, terid }
+            })
         }
 
     } catch (error) {
@@ -67,18 +62,18 @@ const callAPIExit = async (data) => {
 
 };
 
-const createRecordingAPI = async (data, terid) => {
+const createRecordingAPI = async (data) => {
     try {
 
-        console.log(data, terid);
-        /* for (const teridRegister of data) {
+        console.log(data);
+        /* for (const teridRegister of result) {
 
             const { starttime, endtime } = teridRegister;
             const fecha1 = moment(starttime, "YYYY-MM-DD HH:mm:ss");
             const fecha2 = moment(endtime, "YYYY-MM-DD HH:mm:ss")
             let minutos = fecha2.diff(fecha1, 'minutes');
 
-            console.log({...teridRegister, minutos, terid: data.terid});
+            console.log({ ...teridRegister, minutos, terid });
         } */
         /* await pool.query('INSERT INTO public.recordign_hours (name, filetype, chn, starttime, endtime, minutos, terid) VALUES ($1, $2, $3, $4, $5, $6, $7)', [name, filetype, chn, starttime, endtime, minutos, terid]); */
 
