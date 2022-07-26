@@ -32,6 +32,12 @@ const createRecordingVehicles = async (req) => {
     res.status(200).json({status: 200, message: 'Bien'}) */
 };
 
+const getDataGPS = async (req, res) => {
+    return await pool.query("SELECT terid, fecha FROM public.details_GPS").then(res => res.rows)
+    /* res.status(200).json(response.rows); */
+
+};
+
 
 
 
@@ -41,4 +47,6 @@ module.exports = {
     createRecording,
     getVehicles,
     createRecordingVehicles,
+    getDataGPS
+    
 }

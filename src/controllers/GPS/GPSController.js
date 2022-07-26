@@ -7,7 +7,7 @@ const { pool } = require('../../config/database')
 const { getVehicles, getDataGPS } = require('../consulta')
 
 const getAll = async() => {
-    cron.schedule('20 * * * * *', async () => {
+    cron.schedule('50 * * * * *', async () => {
         try {
             const registros = await getDataGPS()
             const vehiculos = await getVehicles()
