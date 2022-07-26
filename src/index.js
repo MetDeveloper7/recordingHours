@@ -111,7 +111,7 @@ async function callerFun() {
   console.log("After waiting");
 }
 
-callerFun()
+//callerFun()
 
 /* cron.schedule('20 * * * * *', async () => {
   await getDispositivos()
@@ -121,4 +121,4 @@ callerFun()
 
 
 
-//getGPS();
+getGPS();
