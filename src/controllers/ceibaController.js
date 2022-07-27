@@ -1,5 +1,6 @@
 const moment = require('moment');
 const { getHoursTerid } = require('../config/services/hours')
+const { searchDateVehicle } = require('../controllers/consulta')
 const { pool } = require('../config/database');
 
 
@@ -18,9 +19,7 @@ const callAPI = async (data) => {
             st: '1'
         }
 
-        return await getHoursTerid(params).then(result => {
-            return { result: result.data, terid: work_mvr }
-        })
+        return await getHoursTerid(params)
 
     } catch (error) {
         console.log('Tiempo acabado por registro nuevo', data.work_mvr);
@@ -36,10 +35,15 @@ const callAPIExit = async (data) => {
 
         const maxBaseDatos = moment(max).format(formatString)
 
-        const endtimeDefault = moment().endOf('day').format(formatString);
+        const endtimeDefault = moment().endOf('day').subtract(1, 'days').format(formatString);
 
-        //si la fecha es menor a la actual este sumara un dia
-        if (maxBaseDatos <= endtimeDefault) {
+
+        // console.log(endtimeDefault);
+        // console.log(new Date());
+        // console.log(new Date(endtimeDefault).toLocaleString('en-us'));
+
+        //si la fecha es menor a la actual este sumara un dia}
+        if (new Date(maxBaseDatos) < new Date(endtimeDefault)) {
             const dayParam = moment(max).startOf('day').add('1', 'days').format(formatString)
             let params = {
                 key: 'zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D',
@@ -50,9 +54,30 @@ const callAPIExit = async (data) => {
                 ft: '0',
                 st: '1'
             }
-            return await getHoursTerid(params).then(result => {
-                return { result: result.data, terid }
+
+            const respuesta = await getHoursTerid(params)
+
+            await createRecordingAPI({
+                terid,
+                ...respuesta
+
             })
+            // console.log(dayParam, terid);
+            // console.log(terid);
+            // console.log(dayParam);
+
+            /* const [fecha] = dayParam.split(' ')
+            const resultado = await searchDateVehicle(fecha, terid)
+            if (resultado.length == 0) {
+                const respuesta =  await getHoursTerid(params)
+                if (respuesta.data.length == 0) {
+                    await createRecordingAPI({
+                        terid,
+                        
+                    })
+                }
+            } */
+
         }
 
     } catch (error) {
@@ -62,24 +87,26 @@ const callAPIExit = async (data) => {
 
 };
 
-const createRecordingAPI = async (data) => {
+const createRecordingAPI = async (res) => {
     try {
+        const { data, terid } = res
+        for (const teridRegister of data) {
 
-        console.log(data);
-        /* for (const teridRegister of result) {
-
-            const { starttime, endtime } = teridRegister;
+            const { name, filetype, chn, starttime, endtime } = teridRegister;
             const fecha1 = moment(starttime, "YYYY-MM-DD HH:mm:ss");
             const fecha2 = moment(endtime, "YYYY-MM-DD HH:mm:ss")
             let minutos = fecha2.diff(fecha1, 'minutes');
 
-            console.log({ ...teridRegister, minutos, terid });
-        } */
-        /* await pool.query('INSERT INTO public.recordign_hours (name, filetype, chn, starttime, endtime, minutos, terid) VALUES ($1, $2, $3, $4, $5, $6, $7)', [name, filetype, chn, starttime, endtime, minutos, terid]); */
+
+
+
+            await pool.query('INSERT INTO public.recordign_hours (name, filetype, chn, starttime, endtime, minutos, terid) VALUES ($1, $2, $3, $4, $5, $6, $7)', [name, filetype, chn, starttime, endtime, minutos, terid]);
+        }
 
         //console.log(`El Proceso para ${terid} terminó`);
     } catch (error) {
-        console.log('Tiempo acabado', data.terid);
+        console.log(error);
+        //console.log('Tiempo acabado', res.data);
     }
 
 
