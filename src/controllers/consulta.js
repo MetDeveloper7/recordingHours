@@ -42,9 +42,14 @@ const createRecordingVehicles = async (req) => {
 };
 
 const getDataGPS = async (req, res) => {
-    return await pool.query("SELECT terid, fecha FROM public.details_GPS").then(res => res.rows)
+    return await pool.query("SELECT terid, max(fecha) FROM public.details_gps GROUP BY terid").then(res => res.rows)
     /* res.status(200).json(response.rows); */
+};
 
+const searchGPSTerid = async (fecha, terid) => {
+    const response = await pool.query(`SELECT terid FROM public.details_GPS WHERE fecha = '${fecha}'and terid = '${terid}'`)
+    return response.rows;
+    //res.status(200).json(response.rows);
 };
 
 
@@ -57,6 +62,7 @@ module.exports = {
     createRecording,
     getVehicles,
     createRecordingVehicles,
-    getDataGPS
+    getDataGPS,
+    searchGPSTerid
     
 }

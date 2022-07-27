@@ -4,39 +4,31 @@ const cron = require('node-cron');
 
 const { getGPSExternal } = require('../../config/services/gps')
 const { pool } = require('../../config/database')
-const { getVehicles, getDataGPS } = require('../consulta')
+const { getVehicles, getDataGPS, searchGPSTerid } = require('../consulta')
 
-const getAll = async() => {
-    cron.schedule('50 * * * * *', async () => {
-        try {
-            const registros = await getDataGPS()
-            const vehiculos = await getVehicles()
-            vehiculos.map(item => {
-            const finVehicle = []
-            let registroEncontrado = null
-            registros.map(registro => {
-                if (!(item.work_mvr == registro.terid)) {
-                finVehicle.push(false)
-                } else {
-                finVehicle.push(true)
-                registroEncontrado = registro;
-                }
-            })
-            const resultado = finVehicle.includes(true)
-            if (resultado) {
-                console.log("YA ESTÁ EN BD", registroEncontrado);
-                callAPIWhenTeridExist(registroEncontrado);
-            } else {
-                callAPIExternal(item);
-            }
-            registroEncontrado = null
-            })
-        } catch (error) {
-          console.log(error);
+
+async function getAllDevicesGPS() {
+    const [vehiculos, registros] = await Promise.all([getVehicles(), getDataGPS()]);
+    for await (const vehiculo of vehiculos) {
+      let finVehicle = [];
+      let registroEncontrado = null;
+      for (const registro of registros){
+        if (!(vehiculo.work_mvr == registro.terid)) {
+          finVehicle.push(false);
+        } else {
+          finVehicle.push(true);
+          registroEncontrado = registro;
         }
-      
-      });
-};
+      }
+      const resultado = finVehicle.includes(true);
+      if (resultado) {
+        await callAPIWhenTeridExist(registroEncontrado);
+      } else {
+            await callAPIExternal(vehiculo);
+      }
+    }
+}
+
 const getGPS = async () => {
     try {
         let data = {
@@ -90,8 +82,8 @@ const createReport = async (gpstime, terid, encendido, apagado, total) => {
 const callAPIExternal = async (data) => {
     try {
         const { work_mvr } = data;
-        const starttime = "2022-07-1 00:00:00";
-        const endtime = "2022-07-1 23:59:59";
+        const starttime = "2022-06-01 00:00:00";
+        const endtime = "2022-06-01 23:59:59";
         let params = {
             key: 'zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D',
             terid: work_mvr,
@@ -99,7 +91,6 @@ const callAPIExternal = async (data) => {
             endtime: endtime
         }
         result = await getGPSExternal(params);
-        console.log(result.data);
         if (result.data.length > 0) {
             calculate(result.data);
         }
@@ -110,21 +101,25 @@ const callAPIExternal = async (data) => {
 
 const callAPIWhenTeridExist = async (data) => {
     try {
-        const { terid, fecha } = data
-        const fechaTerid = moment(fecha, "YYYY-MM-DD HH:mm:ss");
-        const starttime = "2022-07-01 00:00:00";
-        const endtime = "2022-07-01 23:59:59";
-        if (fechaTerid != starttime) {
+        const { terid, max } = data
+        const fechaTerid = moment(max).format("YYYY-MM-DD HH:mm:ss");
+        const endtime = moment().endOf('day').subtract(1, 'days').format("YYYY-MM-DD HH:mm:ss");
+        if (new Date(fechaTerid) < new Date(endtime)) {
+            const dayParamStart = moment(max).startOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
+            const dayParamEnd = moment(max).endOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
             let params = {
                 key: 'zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D',
-                terid: terid,
-                starttime: starttime,
-                endtime: endtime
+                terid,
+                starttime: dayParamStart,
+                endtime: dayParamEnd
             }
-            console.log(params);
-            result = await getGPSExternal(params);
-            if (result.data.length > 0) {
-                calculate(result.data);
+            const [fechaSig] = dayParamStart.split(" ");
+            const resultado = await searchGPSTerid(fechaSig, terid)
+            if (resultado.length == 0) {
+                const result = await getGPSExternal(params);
+                if (result.data.length > 0) {
+                    calculate(result.data);
+                }
             }
         }
     } catch (error) {
@@ -135,6 +130,6 @@ const callAPIWhenTeridExist = async (data) => {
 
 module.exports = {
     getGPS,
-    calculate, 
-    getAll
+    calculate,
+    getAllDevicesGPS
 }
