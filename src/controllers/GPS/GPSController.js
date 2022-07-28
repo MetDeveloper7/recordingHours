@@ -32,10 +32,10 @@ async function getAllDevicesGPS() {
 const getGPS = async () => {
     try {
         let data = {
-            "terid": "00980001D0",
+            "terid": "0098000135",
             "key": "zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D",
-            "starttime": "2022-06-30 00:00:00",
-            "endtime": "2022-06-30 23:59:59"
+            "starttime": "2022-06-11 00:00:00",
+            "endtime": "2022-06-11 23:59:59"
         }
         result = await getGPSExternal(data);
         calculate(result.data);
@@ -66,8 +66,8 @@ const calculate = async (data) =>{
             //console.log("APAGADO");
         }
     }
-    console.log((auxEncendido/3600).toFixed(2),(auxApagado/3600).toFixed(2), ((auxEncendido+auxApagado)/3600).toFixed(2)); 
-    await createReport(gpstime, terid, (auxEncendido/3600).toFixed(2),(auxApagado/3600).toFixed(2), ((auxEncendido+auxApagado)/3600).toFixed(2));
+    console.log((auxEncendido/3600).toFixed(4),(auxApagado/3600).toFixed(4), ((auxEncendido+auxApagado)/3600).toFixed(4)); 
+    await createReport(gpstime, terid, (auxEncendido/3600).toFixed(4),(auxApagado/3600).toFixed(4), ((auxEncendido+auxApagado)/3600).toFixed(4));
     };
 
 const createReport = async (gpstime, terid, encendido, apagado, total) => {
@@ -91,7 +91,7 @@ const callAPIExternal = async (data) => {
             endtime: endtime
         }
         result = await getGPSExternal(params);
-        if (result.data.length > 0) {
+        if (result.data.length > 1) {
             calculate(result.data);
         }
     } catch (error) {
@@ -103,7 +103,7 @@ const callAPIWhenTeridExist = async (data) => {
     try {
         const { terid, max } = data
         const fechaTerid = moment(max).format("YYYY-MM-DD HH:mm:ss");
-        const endtime = moment().endOf('day').subtract(1, 'days').format("YYYY-MM-DD HH:mm:ss");
+        const endtime = moment().startOf('day').subtract(1, 'days').format("YYYY-MM-DD HH:mm:ss");
         if (new Date(fechaTerid) < new Date(endtime)) {
             const dayParamStart = moment(max).startOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
             const dayParamEnd = moment(max).endOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
@@ -117,7 +117,7 @@ const callAPIWhenTeridExist = async (data) => {
             const resultado = await searchGPSTerid(fechaSig, terid)
             if (resultado.length == 0) {
                 const result = await getGPSExternal(params);
-                if (result.data.length > 0) {
+                if (result.data.length > 1) {
                     calculate(result.data);
                 }
             }
