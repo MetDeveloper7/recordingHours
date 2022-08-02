@@ -12,8 +12,8 @@ async function getAllDevicesGPS() {
     for await (const vehiculo of vehiculos) {
       let finVehicle = [];
       let registroEncontrado = null;
-      for (const registro of registros){
-        if (!(vehiculo.work_mvr == registro.terid)) {
+      for await (const registro of registros){
+        if (!(vehiculo.work_mvr === registro.terid)) {
           finVehicle.push(false);
         } else {
           finVehicle.push(true);
@@ -22,8 +22,10 @@ async function getAllDevicesGPS() {
       }
       const resultado = finVehicle.includes(true);
       if (resultado) {
+        console.log(registroEncontrado.terid);
         await callAPIWhenTeridExist(registroEncontrado);
       } else {
+            console.log("NO ESTA", vehiculo.work_mvr);
             await callAPIExternal(vehiculo);
       }
     }
@@ -31,14 +33,27 @@ async function getAllDevicesGPS() {
 
 const getGPS = async () => {
     try {
+        const starttime = "2022-07-28 00:00:00";
+        const terid = "009800017E";
         let data = {
-            "terid": "0098000135",
+            "terid": terid,
             "key": "zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D",
-            "starttime": "2022-06-11 00:00:00",
-            "endtime": "2022-06-11 23:59:59"
+            "starttime": starttime,
+            "endtime": "2022-07-28 23:59:59"
         }
-        result = await getGPSExternal(data);
-        calculate(result.data);
+        const [fechaSig] = starttime.split(" ");
+        console.log(fechaSig);
+        const resultado = await searchGPSTerid(fechaSig, terid)
+        console.log(resultado.length);
+        if (resultado.length === 0) {
+            const result = await getGPSExternal(params);
+            if (result.data.length > 1) {
+                calculate(result.data);
+            }
+        }
+        else{
+            console.log("YA EXISTE REGISTRO");
+        }
     } catch (error) {
         console.log(error);
     }
@@ -66,7 +81,7 @@ const calculate = async (data) =>{
             //console.log("APAGADO");
         }
     }
-    console.log((auxEncendido/3600).toFixed(4),(auxApagado/3600).toFixed(4), ((auxEncendido+auxApagado)/3600).toFixed(4)); 
+    console.log(terid, (auxEncendido/3600).toFixed(4),(auxApagado/3600).toFixed(4), ((auxEncendido+auxApagado)/3600).toFixed(4)); 
     await createReport(gpstime, terid, (auxEncendido/3600).toFixed(4),(auxApagado/3600).toFixed(4), ((auxEncendido+auxApagado)/3600).toFixed(4));
     };
 
@@ -82,17 +97,24 @@ const createReport = async (gpstime, terid, encendido, apagado, total) => {
 const callAPIExternal = async (data) => {
     try {
         const { work_mvr } = data;
-        const starttime = "2022-06-01 00:00:00";
-        const endtime = "2022-06-01 23:59:59";
+        const starttime = "2022-07-01 00:00:00";
+        const endtime = "2022-07-01 23:59:59";
         let params = {
             key: 'zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D',
             terid: work_mvr,
             starttime: starttime,
             endtime: endtime
         }
-        result = await getGPSExternal(params);
-        if (result.data.length > 1) {
-            calculate(result.data);
+        const [fechaSig] = starttime.split(" ");
+        const resultado = await searchGPSTerid(fechaSig, work_mvr)
+        if (resultado.length === 0) {
+            const result = await getGPSExternal(params);
+            if (result.data.length > 1) {
+                calculate(result.data);
+            }
+        }
+        else{
+            console.log("YA EXISTE REGISTRO DE ", work_mvr, starttime);
         }
     } catch (error) {
         console.log(error);
@@ -121,9 +143,12 @@ const callAPIWhenTeridExist = async (data) => {
                     calculate(result.data);
                 }
             }
+            else{
+                console.log("YA EXISTE REGISTRO DE ", terid, fechaTerid);
+            }
         }
     } catch (error) {
-        console.log(error);
+        console.log("PROBLEMAS DE EJECUCIÓN CON LA API EXTERNA");
     }
 };
 

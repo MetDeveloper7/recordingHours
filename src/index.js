@@ -103,13 +103,15 @@ async function getDispositivos() {
 //getDispositivos()
 
 
-// ACTUALIZA LA CONTABILIDAD DE ACTIVIDAD DEL GPS DE CADA VEHICULO A LAS 2 AM TODOS LOS DIAS
+/* // ACTUALIZA LA CONTABILIDAD DE ACTIVIDAD DEL GPS DE CADA VEHICULO A LAS 2 AM TODOS LOS DIAS
 cron.schedule('* 2 * * *', () => {
   getAllDevicesGPS();
 });
+ */
 
+//ACTUALIZA LA CONTABILIDAD DE ACTIVIDAD DEL GPS DE CADA VEHICULO CADA 2 MIN
+cron.schedule('*/5 * * * *', () => {
+  getAllDevicesGPS();
+});
 
-// ACTUALIZA LA CONTABILIDAD DE ACTIVIDAD DEL GPS DE CADA VEHICULO CADA 2 MIN
-//cron.schedule('*/2 * * * *', () => {
-//    getAllDevicesGPS();
-//});
+//getGPS();
