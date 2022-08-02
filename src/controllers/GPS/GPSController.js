@@ -12,7 +12,7 @@ async function getAllDevicesGPS() {
     for await (const vehiculo of vehiculos) {
       let finVehicle = [];
       let registroEncontrado = null;
-      for await (const registro of registros){
+      for (const registro of registros){
         if (!(vehiculo.work_mvr === registro.terid)) {
           finVehicle.push(false);
         } else {
