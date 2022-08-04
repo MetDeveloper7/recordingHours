@@ -9,26 +9,27 @@ const { getVehicles, getDataGPS, searchGPSTerid } = require('../consulta')
 
 async function getAllDevicesGPS() {
     const [vehiculos, registros] = await Promise.all([getVehicles(), getDataGPS()]);
+    console.log(vehiculos.length, registros.length);
     for await (const vehiculo of vehiculos) {
-      let finVehicle = [];
-      let registroEncontrado = null;
-      for (const registro of registros){
-        if (!(vehiculo.work_mvr === registro.terid)) {
-          finVehicle.push(false);
-        } else {
-          finVehicle.push(true);
-          registroEncontrado = registro;
+        let finVehicle = [];
+        let registroEncontrado = null;
+        for (const registro of registros){
+            if (vehiculo.work_mvr != registro.terid) {
+                finVehicle.push(false);
+            } else {
+                finVehicle.push(true);
+                registroEncontrado = registro;
+            }
         }
-      }
-      const resultado = finVehicle.includes(true);
-      if (resultado) {
-        console.log(registroEncontrado.terid);
-        await callAPIWhenTeridExist(registroEncontrado);
-      } else {
+        const resultado = finVehicle.includes(true);
+        if (resultado) {
+            await callAPIWhenTeridExist(registroEncontrado);
+        } else {
             console.log("NO ESTA", vehiculo.work_mvr);
             await callAPIExternal(vehiculo);
-      }
+        }
     }
+    console.log("-----------------TERMINADO-----------------");
 }
 
 const getGPS = async () => {

@@ -110,8 +110,10 @@ cron.schedule('* 2 * * *', () => {
  */
 
 //ACTUALIZA LA CONTABILIDAD DE ACTIVIDAD DEL GPS DE CADA VEHICULO CADA 2 MIN
-cron.schedule('*/5 * * * *', () => {
-  getAllDevicesGPS();
-});
+//cron.schedule('*/5 * * * *', () => {
+//  getAllDevicesGPS();
+//});
 
 //getGPS();
+
+getAllDevicesGPS();
