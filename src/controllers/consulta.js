@@ -4,17 +4,20 @@ const { pool } = require('../config/database')
 
 const getData = async (req, res) => {
 
+
     const response = await pool.query("SELECT terid, max(endtime) FROM public.recordign_hours GROUP BY terid")
     return response.rows
+    //SELECT terid, max(endtime) FROM public.recordign_hours GROUP BY terid
 
     /* res.status(200).json(response.rows); */
 
 };
 
 const searchDateVehicle = async (date, terid) => {
-    
+
     const response = await pool.query(`
     SELECT terid FROM public.recordign_hours where endtime BETWEEN '${date} 00:00:00' AND '${date} 23:59:59' and terid = '${terid}'`)
+
     return response.rows
 }
 
@@ -64,5 +67,5 @@ module.exports = {
     createRecordingVehicles,
     getDataGPS,
     searchGPSTerid
-    
+
 }
