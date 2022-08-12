@@ -6,9 +6,9 @@ const cron = require('node-cron');
 
 
 
-const { getData, getVehicles } = require('./controllers/consulta')
+const { getData, getVehicles, getDataGPS } = require('./controllers/consulta')
 const { callAPI, callAPIExit, createRecordingAPI } = require('./controllers/ceibaController')
-const { getGPS, getAllDevicesGPS } = require('./controllers/GPS/GPSController')
+const { getGPS, getAllDevicesGPS, getSiguiente } = require('./controllers/GPS/GPSController')
 
 
 app.use(express.json());
@@ -18,8 +18,8 @@ app.use(require('./routes/index'));
 
 
 
-app.listen(3000);
-console.log(`Server on port 3000`);
+app.listen(3001);
+console.log(`Server on port 3001`);
 
 
 async function getDispositivos() {

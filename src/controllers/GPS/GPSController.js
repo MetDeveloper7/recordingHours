@@ -34,20 +34,20 @@ async function getAllDevicesGPS() {
 
 const getGPS = async () => {
     try {
-        const starttime = "2022-07-28 00:00:00";
-        const terid = "009800017E";
+        const starttime = "2022-07-05 00:00:00";
+        const terid = "009800012D";
         let data = {
             "terid": terid,
             "key": "zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D",
             "starttime": starttime,
-            "endtime": "2022-07-28 23:59:59"
+            "endtime": "2022-07-05 23:59:59"
         }
         const [fechaSig] = starttime.split(" ");
         console.log(fechaSig);
         const resultado = await searchGPSTerid(fechaSig, terid)
         console.log(resultado.length);
         if (resultado.length === 0) {
-            const result = await getGPSExternal(params);
+            const result = await getGPSExternal(data);
             if (result.data.length > 1) {
                 calculate(result.data);
             }
@@ -124,6 +124,7 @@ const callAPIExternal = async (data) => {
 
 const callAPIWhenTeridExist = async (data) => {
     try {
+        let band = true;
         const { terid, max } = data
         const fechaTerid = moment(max).format("YYYY-MM-DD HH:mm:ss");
         const endtime = moment().startOf('day').subtract(1, 'days').format("YYYY-MM-DD HH:mm:ss");
@@ -143,6 +144,38 @@ const callAPIWhenTeridExist = async (data) => {
                 if (result.data.length > 1) {
                     calculate(result.data);
                 }
+                else{
+                    let dayStart = moment(dayParamStart).startOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
+                    let dayEnd = moment(dayParamEnd).endOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
+                    console.log("TERID SIN INFO: ", terid, dayStart, "final: ", endtime);
+                    while(band){
+                        if (new Date(dayStart) < new Date(endtime)){
+                            let params = {
+                                key: 'zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D',
+                                terid,
+                                starttime: dayStart,
+                                endtime: dayEnd
+                            }
+                            const [fechaSig] = dayStart.split(" ");
+                            const resultado = await searchGPSTerid(fechaSig, terid)
+                            if (resultado.length == 0) {
+                                const result = await getGPSExternal(params);
+                                if (result.data.length > 1) {
+                                    calculate(result.data);
+                                    band = false;
+                                }
+                                else{
+                                    dayStart = moment(dayStart).startOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
+                                    dayEnd = moment(dayEnd).endOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
+                                    band = true;
+                                }
+                            }
+                        }
+                        else{
+                            band = false;
+                        }
+                    }  
+                }
             }
             else{
                 console.log("YA EXISTE REGISTRO DE ", terid, fechaTerid);
@@ -153,9 +186,25 @@ const callAPIWhenTeridExist = async (data) => {
     }
 };
 
+const getSiguiente = async (data) => {
+    try {
+        const { terid, max } = data;
+        max = moment(max).startOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
+        console.log(max);
+        return {terid, max};
+        
+        
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+
+
 
 module.exports = {
     getGPS,
     calculate,
-    getAllDevicesGPS
+    getAllDevicesGPS,
+    getSiguiente
 }
