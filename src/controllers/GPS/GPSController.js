@@ -97,9 +97,11 @@ const createReport = async (gpstime, terid, encendido, apagado, total) => {
 
 const callAPIExternal = async (data) => {
     try {
+        let band = true;
         const { work_mvr } = data;
         const starttime = "2022-07-01 00:00:00";
         const endtime = "2022-07-01 23:59:59";
+        const dateNow = moment().startOf('day').subtract(1, 'days').format("YYYY-MM-DD HH:mm:ss");
         let params = {
             key: 'zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D',
             terid: work_mvr,
@@ -108,10 +110,42 @@ const callAPIExternal = async (data) => {
         }
         const [fechaSig] = starttime.split(" ");
         const resultado = await searchGPSTerid(fechaSig, work_mvr)
-        if (resultado.length === 0) {
+        if (resultado.length == 0) {
             const result = await getGPSExternal(params);
             if (result.data.length > 1) {
                 calculate(result.data);
+            }
+            else{
+                let dayStart = moment(starttime).startOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
+                let dayEnd = moment(endtime).endOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
+                console.log("TERID SIN INFO: ", work_mvr, dayStart, "final: ", dayEnd);
+                while(band){
+                    if (new Date(dayStart) < new Date(dateNow)){
+                        let params = {
+                            key: 'zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D',
+                            terid: work_mvr,
+                            starttime: dayStart,
+                            endtime: dayEnd
+                        }
+                        const [fechaSig] = dayStart.split(" ");
+                        const resultado = await searchGPSTerid(fechaSig, work_mvr)
+                        if (resultado.length == 0) {
+                            const result = await getGPSExternal(params);
+                            if (result.data.length > 1) {
+                                calculate(result.data);
+                                band = false;
+                            }
+                            else{
+                                dayStart = moment(dayStart).startOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
+                                dayEnd = moment(dayEnd).endOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
+                                band = true;
+                            }
+                        }
+                    }
+                    else{
+                        band = false;
+                    }
+                }  
             }
         }
         else{
@@ -147,7 +181,7 @@ const callAPIWhenTeridExist = async (data) => {
                 else{
                     let dayStart = moment(dayParamStart).startOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
                     let dayEnd = moment(dayParamEnd).endOf('day').add('1', 'days').format("YYYY-MM-DD HH:mm:ss");
-                    console.log("TERID SIN INFO: ", terid, dayStart, "final: ", endtime);
+                    console.log("TERID SIN INFO: ", terid, dayStart, "final: ", dayEnd);
                     while(band){
                         if (new Date(dayStart) < new Date(endtime)){
                             let params = {
