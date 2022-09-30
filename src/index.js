@@ -7,7 +7,7 @@ const cron = require('node-cron');
 
 
 const { getData, getVehicles } = require('./controllers/consulta')
-const { callAPI, callAPIExit} = require('./controllers/ceibaController')
+const { callAPI, callAPIExit } = require('./controllers/ceibaController')
 const { getGPS, getAllDevicesGPS } = require('./controllers/GPS/GPSController')
 
 
@@ -49,7 +49,7 @@ async function getDispositivos() {
 
 
 
-// cron.schedule('10 * * * * *', () => {
+// cron.schedule('0 */45 * * * *', () => {
 //   getDispositivos()
 // })
 
