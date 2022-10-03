@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
 const app = express();
+
 const cron = require('node-cron');
-
-
+const notifier = require('node-notifier');
 
 
 const { getData, getVehicles } = require('./controllers/consulta')
@@ -44,7 +44,10 @@ async function getDispositivos() {
       await callAPI(vehiculo)
     }
   }
-
+  notifier.notify({
+    title: 'Horas Grabadas',
+    message: 'Se ha terminado el ciclo de horas grabadas'
+  });
 }
 
 

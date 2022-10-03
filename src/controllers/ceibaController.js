@@ -44,9 +44,7 @@ const callAPI = async (data) => {
 const callAPIExit = async (data) => {
     try {
         const { terid, max } = data
-
         
-
         const maxBaseDatos = moment(max).format(formatString)
 
         //const endtimeDefault = moment().endOf('day').subtract(1, 'days').format(formatString);
@@ -81,13 +79,11 @@ const callAPIExit = async (data) => {
 
                 const respuesta = await getHoursTerid(params)
 
-                console.log(params, respuesta);
-
                 if (respuesta.data.length > 0) {
-                    /* await createRecordingAPI({
+                    await createRecordingAPI({
                         terid,
                         ...respuesta
-                    }) */
+                    })
                 } else {
                     console.log(`El terid ${terid} ha dado respuesta ${JSON.stringify(respuesta)}`);
                 }
