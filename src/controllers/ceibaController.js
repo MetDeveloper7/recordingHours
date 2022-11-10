@@ -5,7 +5,7 @@ const { pool } = require('../config/database');
 
 
 const formatString = "YYYY-MM-DD HH:mm:ss"
-const fechaInicio = '2022-09-01 00:00:00'
+const fechaInicio = '2022-11-01 00:00:00'
 const fechaLimite = moment(new Date()).endOf('day').subtract('2', 'days').format(formatString)
 
 const callAPI = async (data) => {
@@ -44,7 +44,7 @@ const callAPI = async (data) => {
 const callAPIExit = async (data) => {
     try {
         const { terid, max } = data
-        
+
         const maxBaseDatos = moment(max).format(formatString)
 
         //const endtimeDefault = moment().endOf('day').subtract(1, 'days').format(formatString);
@@ -53,42 +53,73 @@ const callAPIExit = async (data) => {
         if (new Date(maxBaseDatos) < new Date(fechaLimite)) {
             let dayParams = ''
 
-            if (new Date(maxBaseDatos) < new Date(fechaInicio)) {
+            const checkDateDB = new Date(maxBaseDatos) < new Date(fechaInicio)
+
+            if (checkDateDB) {
                 dayParams = fechaInicio
             }
             else {
                 dayParams = moment(max).startOf('day').add('1', 'days').format(formatString)
             }
 
+            respuesta = await saveRecording(dayParams, terid)
+            let conditionRepeat = 1;
 
-            let params = {
-                key: 'zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D',
-                terid,
-                starttime: dayParams,
-                endtime: fechaLimite,
-                chl: '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16',
-                ft: '0',
-                st: '1'
+            function timeout(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
             }
 
-            const dayBase = dayParams.split(' ')[0]
+            while (conditionRepeat < 3 && (respuesta.errorcode === 200 && respuesta.data.length === 0)) {
 
-            const resultado = await searchDateVehicle(dayBase, terid)
-
-            if (resultado.length == 0) {
-
-                const respuesta = await getHoursTerid(params)
-
-                if (respuesta.data.length > 0) {
-                    await createRecordingAPI({
-                        terid,
-                        ...respuesta
-                    })
+                respuesta = await saveRecording(dayParams, terid)
+                if (respuesta.errorcode === 200 && respuesta.data.length === 0) {
+                    await timeout(10000);
+                    conditionRepeat++
                 } else {
-                    console.log(`El terid ${terid} ha dado respuesta ${JSON.stringify(respuesta)}`);
+                    break
                 }
+                console.log(`Esperando respuesta del terid ${terid} - intento: ${conditionRepeat}`);
+            }
+
+            if (conditionRepeat === 3) {
+                if (checkDateDB) {
+                    dayParams = moment(fechaInicio).startOf('day').add('1', 'days').format(formatString)
+                }
+                else {
+                    dayParams = moment(max).startOf('day').add('2', 'days').format(formatString)
+                }
+
+                respuesta = await saveRecording(dayParams, terid)
+                let conditionNewDay = 1;
+
+
+                while (conditionNewDay < 3 && (respuesta.errorcode === 200 && respuesta.data.length === 0)) {
+
+                    if (new Date(maxBaseDatos) < new Date(fechaInicio)) {
+                        dayParams = moment(dayParams).startOf('day').add('1', 'days').format(formatString)
+                    }
+                    else {
+                        dayParams = moment(dayParams).startOf('day').add('1', 'days').format(formatString)
+                    }
+                    respuesta = await saveRecording(dayParams, terid)
+                    if (respuesta.errorcode === 200 && respuesta.data.length === 0) {
+                        await timeout(10000);
+                        conditionNewDay++
+                    } else {
+                        break
+                    }
+                    console.log(`Esperando respuesta del terid ${terid} - intento: ${conditionNewDay}`);
+                }
+            }
+
+
+            if (respuesta.data.length > 0) {
+                await createRecordingAPI({
+                    terid,
+                    ...respuesta
+                })
             } else {
-                console.log(`Ya hay registro en la base de datos para el terid ${terid}`);
+                console.log(`El terid ${terid} ha dado respuesta ${JSON.stringify(respuesta)}`);
             }
 
         } else {
@@ -96,9 +127,34 @@ const callAPIExit = async (data) => {
         }
 
     } catch (error) {
+        console.log(error)
         console.log('Tiempo acabado por registro antiguo', data.terid);
     }
 };
+
+const saveRecording = async (dayParams, terid) => {
+    let params = {
+        key: 'zT908g2j9nhN588DYZDrFmmN3P7FllzEfBoN%2FLOMx%2FDq9HouFc7CwA%3D%3D',
+        terid,
+        starttime: dayParams,
+        endtime: fechaLimite,
+        chl: '1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16',
+        ft: '0',
+        st: '1'
+    }
+
+    const dayBase = dayParams.split(' ')[0]
+
+    const resultado = await searchDateVehicle(dayBase, terid)
+
+    if (resultado.length == 0) {
+        const respuesta = await getHoursTerid(params)
+        return respuesta
+    } else {
+        return `Ya hay registro en la base de datos para el terid ${terid}`
+    }
+
+}
 
 const createRecordingAPI = async (res) => {
     try {
