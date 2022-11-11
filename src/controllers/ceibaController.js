@@ -116,17 +116,16 @@ const callAPIExit = async (data) => {
             }
 
             if (respuesta.data.length > 0) {
-                /* await createRecordingAPI({
+                await createRecordingAPI({
                     terid,
                     ...respuesta
-                }) */
-                console.log(respuesta.data.length, dayParams)
+                })
             } else {
                 console.log(`El terid ${terid} ha dado respuesta ${JSON.stringify(respuesta)}`);
             }
 
         } else {
-            console.log(`el terid ${terid} ha culminado el mes ${max}`)
+            console.log(`El terid ${terid} ha culminado el mes ${max}`)
         }
     } catch (error) {
         console.log(error)
