@@ -88,36 +88,39 @@ const callAPIExit = async (data) => {
                 else {
                     dayParams = moment(max).startOf('day').add('2', 'days').format(formatString)
                 }
-
-                respuesta = await saveRecording(dayParams, terid)
-                let conditionNewDay = 1;
-
-
-                while (conditionNewDay < 3 && (respuesta.errorcode === 200 && respuesta.data.length === 0)) {
-
-                    if (new Date(maxBaseDatos) < new Date(fechaInicio)) {
-                        dayParams = moment(dayParams).startOf('day').add('1', 'days').format(formatString)
-                    }
-                    else {
-                        dayParams = moment(dayParams).startOf('day').add('1', 'days').format(formatString)
-                    }
+                if(new Date(dayParams) < new Date(fechaLimite)){
                     respuesta = await saveRecording(dayParams, terid)
-                    if (respuesta.errorcode === 200 && respuesta.data.length === 0) {
-                        await timeout(10000);
-                        conditionNewDay++
-                    } else {
-                        break
+                    let conditionNewDay = 1;
+    
+                    while (conditionNewDay < 3 && (respuesta.errorcode === 200 && respuesta.data.length === 0)) {
+                        if (new Date(maxBaseDatos) < new Date(fechaInicio)) {
+                            dayParams = moment(dayParams).startOf('day').add('1', 'days').format(formatString)
+                        }
+                        else {
+                            dayParams = moment(dayParams).startOf('day').add('1', 'days').format(formatString)
+                        }
+                        if(new Date(dayParams) > new Date(fechaLimite)) break
+    
+                        respuesta = await saveRecording(dayParams, terid)
+                        if (respuesta.errorcode === 200 && respuesta.data.length === 0) {
+                            await timeout(10000);
+                            conditionNewDay++
+                        } else {
+                            break
+                        }
+                        console.log(`Esperando respuesta del terid ${terid} con fecha ${dayParams} - intento: ${conditionNewDay}`);
                     }
-                    console.log(`Esperando respuesta del terid ${terid} - intento: ${conditionNewDay}`);
+                }else{
+                    console.log(`El terid ${terid} no se ha podido procesar por limite de fecha`);
                 }
             }
 
-
             if (respuesta.data.length > 0) {
-                await createRecordingAPI({
+                /* await createRecordingAPI({
                     terid,
                     ...respuesta
-                })
+                }) */
+                console.log(respuesta.data.length, dayParams)
             } else {
                 console.log(`El terid ${terid} ha dado respuesta ${JSON.stringify(respuesta)}`);
             }
@@ -125,7 +128,6 @@ const callAPIExit = async (data) => {
         } else {
             console.log(`el terid ${terid} ha culminado el mes ${max}`)
         }
-
     } catch (error) {
         console.log(error)
         console.log('Tiempo acabado por registro antiguo', data.terid);
