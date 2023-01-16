@@ -7,6 +7,11 @@ const { pool } = require("../../config/database");
 const { getVehicles, getDataGPS, searchGPSTerid } = require("../consulta");
 
 async function getAllDevicesGPS() {
+  const fechaEjecucion = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+  console.log(
+    "\n----- Fecha de inicio de ejecucion",
+    fechaEjecucion + "-----\n"
+  );
   const [vehiculos, registros] = await Promise.all([
     getVehicles(),
     getDataGPS(),

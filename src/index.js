@@ -1,45 +1,46 @@
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
 const app = express();
-const cron = require('node-cron');
+const cron = require("node-cron");
+const moment = require("moment");
 
-
-
-
-const { getData, getVehicles, getDataGPS } = require('./controllers/consulta')
-const { callAPI, callAPIExit, createRecordingAPI } = require('./controllers/ceibaController')
-const { getGPS, getAllDevicesGPS, getSiguiente } = require('./controllers/GPS/GPSController')
-
+const { getData, getVehicles, getDataGPS } = require("./controllers/consulta");
+const {
+  callAPI,
+  callAPIExit,
+  createRecordingAPI,
+} = require("./controllers/ceibaController");
+const {
+  getGPS,
+  getAllDevicesGPS,
+  getSiguiente,
+} = require("./controllers/GPS/GPSController");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
-app.use(require('./routes/index'));
-
-
+app.use(require("./routes/index"));
 
 app.listen(3001);
 console.log(`Server on port 3001`);
 
-
 async function getDispositivos() {
-
   const [vehiculos, registros] = await Promise.all([getVehicles(), getData()]);
-  
+
   for await (const vehiculo of vehiculos) {
-    let finVehicle = []
-    let registroEncontrado = null
+    let finVehicle = [];
+    let registroEncontrado = null;
     for (const registro of registros) {
       if (!(vehiculo.work_mvr == registro.terid)) {
-        finVehicle.push(false)
+        finVehicle.push(false);
       } else {
-        finVehicle.push(true)
-        registroEncontrado = registro
+        finVehicle.push(true);
+        registroEncontrado = registro;
       }
     }
-    const resultado = finVehicle.includes(true)
+    const resultado = finVehicle.includes(true);
     if (resultado) {
-      await callAPIExit(registroEncontrado)
+      await callAPIExit(registroEncontrado);
     } else {
       // console.log('No está');
     }
@@ -94,14 +95,11 @@ async function getDispositivos() {
 
 // callerFun()
 
-
-
 // cron.schedule('10 * * * * *', () => {
 //   getDispositivos()
 // })
 
 //getDispositivos()
-
 
 /* // ACTUALIZA LA CONTABILIDAD DE ACTIVIDAD DEL GPS DE CADA VEHICULO A LAS 2 AM TODOS LOS DIAS
 cron.schedule('* 2 * * *', () => {
@@ -109,11 +107,12 @@ cron.schedule('* 2 * * *', () => {
 });
  */
 
-//ACTUALIZA LA CONTABILIDAD DE ACTIVIDAD DEL GPS DE CADA VEHICULO CADA 2 MIN
-//cron.schedule('*/5 * * * *', () => {
-//  getAllDevicesGPS();
-//});
+const fechaEjecucion = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+console.log("\n***Fecha de inicio", fechaEjecucion + "***\n");
+cron.schedule("0 7 * * *", () => {
+  getAllDevicesGPS();
+});
 
 //getGPS();
 
-getAllDevicesGPS();
+//getAllDevicesGPS();
