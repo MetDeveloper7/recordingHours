@@ -49,19 +49,15 @@ async function getDispositivos() {
     title: "Horas Grabadas",
     message: "Se ha terminado el ciclo de horas grabadas",
   });
+  const fechaFin = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+  console.log("\n\n******-TERMINADO-******", fechaFin);
 }
 
-const fechaEjecucion = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-console.log("\n----- Fecha de inicio", fechaEjecucion + "-----\n");
-cron.schedule("*/30 * * * *", () => {
-  const fechaEjecucion2 = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-  console.log(
-    "\n----- Fecha de inicio de ejecucion",
-    fechaEjecucion2 + "-----\n"
-  );
+const fecha = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+console.log("\n----- Fecha de inicio***", fecha + "-----\n");
+cron.schedule("*/20 * * * *", () => {
   getDispositivos();
 });
-
 //getDispositivos();
 
 // ACTUALIZA LA CONTABILIDAD DE ACTIVIDAD DEL GPS DE CADA VEHICULO A LAS 2 AM TODOS LOS DIAS
