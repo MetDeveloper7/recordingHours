@@ -92,35 +92,22 @@ async function getDispositivos() {
 //   await getDispositivos();
 //   console.log("After waiting");
 // }
-
 // callerFun()
 
-// cron.schedule('10 * * * * *', () => {
-//   getDispositivos()
-// })
-
-//getDispositivos()
-
-/* // ACTUALIZA LA CONTABILIDAD DE ACTIVIDAD DEL GPS DE CADA VEHICULO A LAS 2 AM TODOS LOS DIAS
-cron.schedule('* 2 * * *', () => {
-  getAllDevicesGPS();
-});
- */
 
 const fechaEjecucion = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
 console.log("\n***Fecha de inicio", fechaEjecucion + "***\n");
 
+
 // *******************************************************
 // *******************************************************
 //Se ejecuta una vez todos los dias a las 6 de mañana
-cron.schedule("0 */4 * * *", () => {
-  //console.log("\n**Se está ejecutando cada 3 horas**", fecha + "**");
+cron.schedule("0 6 * * *", () => {
   console.log("\n**Se ejecuta una vez todos los dias a las 6 de mañana**", fecha + "**");
   getAllDevicesGPS();
  });
 // *******************************************************
 // *******************************************************
-
 
 
 // *******************************************************
@@ -131,20 +118,15 @@ cron.schedule("0 */4 * * *", () => {
 // *******************************************************
 
 
+// *******************************************************
+// *******************************************************
+//Se está ejecutando cada x horas
+cron.schedule("0 */4 * * *", () => {
+  console.log("\n**Se está ejecutando cada x horas**", fecha + "**");
+  getAllDevicesGPS();
+ });
+// *******************************************************
+// *******************************************************
 
 
-//Se ejecuta cada 20 minutos a las 8 de la mañana
-// cron.schedule("*/20 8 * * *", () => {
-//   getAllDevicesGPS();
-// });
 
-// getAllDevicesGPS();
-
-//Se ejecuta cada 5 min
-//cron.schedule("*/30 * * * *", () => {
-//  getAllDevicesGPS();
-//});
-
-//getGPS();
-
-//getAllDevicesGPS();
