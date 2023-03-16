@@ -46,38 +46,38 @@ async function getDispositivos() {
     }
   }
   notifier.notify({
-    title: "Horas Grabadas",
-    message: "Se ha terminado el ciclo de horas grabadas",
+    title: "*/*/*/HG/*/*/*",
+    message: "Se ha terminado el ciclo",
   });
   const fechaFin = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-  console.log("\n\n******-TERMINADO-******", fechaFin);
+  console.log("\n\n****** - T E R M I N A D O - ******", fechaFin);
 }
 
 // *******************************************************
 // *******************************************************
-//Se ejecuta a las 7 de la mañana de cada dia
+//Se ejecuta a las x de la mañana de cada dia
 cron.schedule("0 7 * * *", () => {
-  console.log("\n**Se está ejecutando cada día a las x **");
+  console.log("\n** Se está ejecutando cada día a las x **");
   getDispositivos();
 });
 // *******************************************************
 // *******************************************************
 
 // *******************************************************
-//Despues de ejecutarse una vez a las 7 de la mañana, es necesario
+//Despues de ejecutarse una vez a las x de la mañana, es necesario
 //ejecutarlo unas cuantas veces más porque hay algunos vehículos (terid)
 //que no procesaron el día y deben seguir procesando. Este ciclo demora aproximadamente
 //una hora y tipo 10 o 11 de la mañana se debe descomentar la línea 73 y correr el programa.
 //para posterior activar la ejecución cada x minutos, esto puede variar entre 15 y 20 min (línea 79)
-console.log("\n**Se está ejecutando solo**");
-getDispositivos();
+console.log("\n** Se está ejecutando solo **");
+//getDispositivos();
 // *******************************************************
 
 // *******************************************************
 // *******************************************************
 //Se ejecuta cada x minutos
 cron.schedule("*/15 * * * *", () => {
-  console.log("\n**Se está ejecutando cada x minutos **");
+  console.log("\n** Se está ejecutando cada x minutos **");
   getDispositivos();
 });
 // *******************************************************
