@@ -22,7 +22,7 @@ async function getDispositivos() {
   const fechaEjecucion = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
   console.log(
     "\n----- Fecha de inicio de ejecucion",
-    fechaEjecucion + "-----\n"
+    fechaEjecucion + " -----\n"
   );
 
   const [vehiculos, registros] = await Promise.all([getVehicles(), getData()]);
@@ -53,20 +53,15 @@ async function getDispositivos() {
   console.log("\n\n******-TERMINADO-******", fechaFin);
 }
 
-const fecha = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-console.log("\n----- Fecha de inicio***", fecha + "-----\n");
-
-
 // *******************************************************
 // *******************************************************
 //Se ejecuta a las 7 de la mañana de cada dia
 cron.schedule("0 7 * * *", () => {
-  console.log("\n**Se está ejecutando cada día a las x**", fecha + "**");
-   getDispositivos();
+  console.log("\n**Se está ejecutando cada día a las x **");
+  getDispositivos();
 });
 // *******************************************************
 // *******************************************************
-
 
 // *******************************************************
 //Despues de ejecutarse una vez a las 7 de la mañana, es necesario
@@ -74,16 +69,15 @@ cron.schedule("0 7 * * *", () => {
 //que no procesaron el día y deben seguir procesando. Este ciclo demora aproximadamente
 //una hora y tipo 10 o 11 de la mañana se debe descomentar la línea 73 y correr el programa.
 //para posterior activar la ejecución cada x minutos, esto puede variar entre 15 y 20 min (línea 79)
-console.log("\n**Se está ejecutando solo**", fecha + "**");
-//getDispositivos();
+console.log("\n**Se está ejecutando solo**");
+getDispositivos();
 // *******************************************************
-
 
 // *******************************************************
 // *******************************************************
 //Se ejecuta cada x minutos
 cron.schedule("*/15 * * * *", () => {
-  console.log("\n**Se está ejecutando cada x minutos", fecha + "**");
+  console.log("\n**Se está ejecutando cada x minutos **");
   getDispositivos();
 });
 // *******************************************************
