@@ -94,39 +94,30 @@ async function getDispositivos() {
 // }
 // callerFun()
 
-
-const fechaEjecucion = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-console.log("\n***Fecha de inicio", fechaEjecucion + "***\n");
-
-
 // *******************************************************
 // *******************************************************
-//Se ejecuta una vez todos los dias a las 6 de mañana
+//Se ejecuta una vez todos los dias a las x de mañana
 cron.schedule("0 6 * * *", () => {
-  console.log("\n**Se ejecuta una vez todos los dias a las 6 de mañana**", fecha + "**");
+  console.log("\n** Se ejecuta una vez todos los dias a las x de mañana **");
   getAllDevicesGPS();
- });
+});
 // *******************************************************
 // *******************************************************
 
-
 // *******************************************************
-//Despues de ejecutarse una vez a las 7 de la mañana, es necesario
+//Despues de ejecutarse una vez a las x de la mañana, es necesario
 //ejecutarlo una o dos veces más porque quizá hay algunos vehículos (terid)
 //que no procesaron el día. Se debe descomentar la línea 117 y correr el programa.
-//getAllDevicesGPS();
+// console.log("\n** Se está ejecutando solo **");
+// getAllDevicesGPS();
 // *******************************************************
-
 
 // *******************************************************
 // *******************************************************
 //Se está ejecutando cada x horas
 cron.schedule("0 */4 * * *", () => {
-  console.log("\n**Se está ejecutando cada x horas**", fecha + "**");
+  console.log("\n** Se está ejecutando cada x horas **");
   getAllDevicesGPS();
- });
+});
 // *******************************************************
 // *******************************************************
-
-
-

@@ -1,6 +1,7 @@
 const moment = require("moment");
 const axio = require("axios");
 const cron = require("node-cron");
+const notifier = require("node-notifier");
 
 const { getGPSExternal } = require("../../config/services/gps");
 const { pool } = require("../../config/database");
@@ -10,7 +11,7 @@ async function getAllDevicesGPS() {
   const fechaEjecucion = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
   console.log(
     "\n----- Fecha de inicio de ejecucion",
-    fechaEjecucion + "-----\n"
+    fechaEjecucion + " -----\n"
   );
   const [vehiculos, registros] = await Promise.all([
     getVehicles(),
@@ -36,9 +37,13 @@ async function getAllDevicesGPS() {
       await callAPIExternal(vehiculo);
     }
   }
+  notifier.notify({
+    title: "*/*/*/GPS/*/*/*",
+    message: "Se ha terminado el ciclo",
+  });
   const fechaFin = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-console.log("\n***Fecha de fin", fechaFin);
-  console.log("-----------------TERMINADO-----------------");
+  console.log("\n*** Fecha de fin ***", fechaFin);
+  console.log("----------------- T E R M I N A D O -----------------");
 }
 
 const getGPS = async () => {
