@@ -113,7 +113,7 @@ cron.schedule("0 6 * * *", () => {
 // *******************************************************
 //Despues de ejecutarse una vez a las 7 de la mañana, es necesario
 //ejecutarlo una o dos veces más porque quizá hay algunos vehículos (terid)
-//que no procesaron el día. Se debe descomentar la línea 126 y correr el programa.
+//que no procesaron el día. Se debe descomentar la línea 117 y correr el programa.
 //getAllDevicesGPS();
 // *******************************************************
 
