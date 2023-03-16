@@ -109,9 +109,41 @@ cron.schedule('* 2 * * *', () => {
 
 const fechaEjecucion = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
 console.log("\n***Fecha de inicio", fechaEjecucion + "***\n");
-cron.schedule("0 7 * * *", () => {
+
+// *******************************************************
+// *******************************************************
+//Se ejecuta una vez todos los dias a las 6 de mañana
+cron.schedule("0 */4 * * *", () => {
+  //console.log("\n**Se está ejecutando cada 3 horas**", fecha + "**");
+  console.log("\n**Se ejecuta una vez todos los dias a las 6 de mañana**", fecha + "**");
   getAllDevicesGPS();
-});
+ });
+// *******************************************************
+// *******************************************************
+
+
+
+// *******************************************************
+//Despues de ejecutarse una vez a las 7 de la mañana, es necesario
+//ejecutarlo una o dos veces más porque quizá hay algunos vehículos (terid)
+//que no procesaron el día. Se debe descomentar la línea 126 y correr el programa.
+//getAllDevicesGPS();
+// *******************************************************
+
+
+
+
+//Se ejecuta cada 20 minutos a las 8 de la mañana
+// cron.schedule("*/20 8 * * *", () => {
+//   getAllDevicesGPS();
+// });
+
+// getAllDevicesGPS();
+
+//Se ejecuta cada 5 min
+//cron.schedule("*/30 * * * *", () => {
+//  getAllDevicesGPS();
+//});
 
 //getGPS();
 

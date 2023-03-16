@@ -36,6 +36,8 @@ async function getAllDevicesGPS() {
       await callAPIExternal(vehiculo);
     }
   }
+  const fechaFin = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
+console.log("\n***Fecha de fin", fechaFin);
   console.log("-----------------TERMINADO-----------------");
 }
 
