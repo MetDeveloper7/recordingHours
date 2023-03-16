@@ -55,17 +55,34 @@ async function getDispositivos() {
 
 const fecha = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
 console.log("\n----- Fecha de inicio***", fecha + "-----\n");
-cron.schedule("*/20 * * * *", () => {
+// *******************************************************
+// *******************************************************
+//Se ejecuta a las 7 de la mañana de cada dia
+cron.schedule("0 7 * * *", () => {
+  console.log("\n**Se está ejecutando cada día a las x**", fecha + "**");
+   getDispositivos();
+});
+// *******************************************************
+// *******************************************************
+
+
+// *******************************************************
+//Despues de ejecutarse una vez a las 7 de la mañana, es necesario
+//ejecutarlo unas cuantas veces más porque hay algunos vehículos (terid)
+//que no procesaron el día y deben seguir procesando. Este ciclo demora aproximadamente
+//una hora y tipo 10 o 11 de la mañana se debe descomentar la línea 73 y correr el programa.
+//para posterior activar la ejecución cada x minutos, esto puede variar entre 15 y 20 min (línea 79)
+console.log("\n**Se está ejecutando solo**", fecha + "**");
+//getDispositivos();
+// *******************************************************
+
+// *******************************************************
+// *******************************************************
+//Se ejecuta cada x minutos
+cron.schedule("*/15 * * * *", () => {
+  console.log("\n**Se está ejecutando cada x minutos", fecha + "**");
   getDispositivos();
 });
-//getDispositivos();
+// *******************************************************
+// *******************************************************
 
-// ACTUALIZA LA CONTABILIDAD DE ACTIVIDAD DEL GPS DE CADA VEHICULO A LAS 2 AM TODOS LOS DIAS
-/* cron.schedule('* 2 * * *', () => {
-  getAllDevicesGPS();
-}); */
-
-// ACTUALIZA LA CONTABILIDAD DE ACTIVIDAD DEL GPS DE CADA VEHICULO CADA 2 MIN
-//cron.schedule('*/2 * * * *', () => {
-//    getAllDevicesGPS();
-//});

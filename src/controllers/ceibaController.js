@@ -34,10 +34,10 @@ const callAPI = async (data) => {
     );
 
     if (resultado.data.length > 0) {
-      /* await createRecordingAPI({
+      await createRecordingAPI({
         terid: work_mvr,
         ...resultado,
-      }); */
+      });
     }
   } catch (error) {
     console.log("Tiempo acabado por registro nuevo", data.work_mvr);
