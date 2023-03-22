@@ -105,19 +105,16 @@ cron.schedule("0 6 * * *", () => {
 // *******************************************************
 
 // *******************************************************
-//Despues de ejecutarse una vez a las x de la mañana, es necesario
-//ejecutarlo una o dos veces más porque quizá hay algunos vehículos (terid)
-//que no procesaron el día. Se debe descomentar la línea 117 y correr el programa.
-// console.log("\n** Se está ejecutando solo **");
-// getAllDevicesGPS();
+// *******************************************************
+//Se ejecuta cada x min entre las x y las x
+// cron.schedule("*/20 7-8 * * *", () => {
+//   console.log("\n** Se ejecuta cada x min entre las x y las x **");
+//   getAllDevicesGPS();
+// });
+// *******************************************************
 // *******************************************************
 
 // *******************************************************
-// *******************************************************
-//Se está ejecutando cada x horas
-cron.schedule("0 */4 * * *", () => {
-  console.log("\n** Se está ejecutando cada x horas **");
-  getAllDevicesGPS();
-});
-// *******************************************************
+// console.log("\n** Se está ejecutando solo **");
+// getAllDevicesGPS();
 // *******************************************************
