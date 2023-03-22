@@ -50,7 +50,13 @@ async function getDispositivos() {
     message: "Se ha terminado el ciclo",
   });
   const fechaFin = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-  console.log("\n\n****** - T E R M I N A D O - ******"+ "inicio: "+fechaEjecucion+" fin: "+fechaFin);
+  console.log(
+    "\n\n****** - T E R M I N A D O - ****** " +
+      " inicio: " +
+      fechaEjecucion +
+      " fin: " +
+      fechaFin
+  );
 }
 
 // *******************************************************
