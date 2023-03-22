@@ -9,10 +9,6 @@ const { getVehicles, getDataGPS, searchGPSTerid } = require("../consulta");
 
 async function getAllDevicesGPS() {
   const fechaEjecucion = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-  console.log(
-    "\n----- Fecha de inicio de ejecucion",
-    fechaEjecucion + " -----\n"
-  );
   const [vehiculos, registros] = await Promise.all([
     getVehicles(),
     getDataGPS(),
@@ -38,12 +34,17 @@ async function getAllDevicesGPS() {
     }
   }
   notifier.notify({
-    title: "*/*/*/GPS/*/*/*",
+    title: "** GPS **",
     message: "Se ha terminado el ciclo",
   });
   const fechaFin = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-  console.log("\n*** Fecha de fin ***", fechaFin);
-  console.log("----------------- T E R M I N A D O -----------------");
+  console.log(
+    "\n\n****** - T E R M I N A D O - ****** " +
+      " inicio: " +
+      fechaEjecucion +
+      " fin: " +
+      fechaFin
+  );
 }
 
 const getGPS = async () => {

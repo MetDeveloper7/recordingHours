@@ -106,15 +106,15 @@ cron.schedule("0 6 * * *", () => {
 
 // *******************************************************
 // *******************************************************
-//Se ejecuta cada x min entre las x y las x
-// cron.schedule("*/20 7-8 * * *", () => {
-//   console.log("\n** Se ejecuta cada x min entre las x y las x **");
-//   getAllDevicesGPS();
-// });
+//Se ejecuta cada x min a las x
+cron.schedule("*/20 7 * * *", () => {
+  console.log("\n** Se ejecuta cada x min a las x **");
+  getAllDevicesGPS();
+});
 // *******************************************************
 // *******************************************************
 
 // *******************************************************
 // console.log("\n** Se está ejecutando solo **");
-// getAllDevicesGPS();
+getAllDevicesGPS();
 // *******************************************************
