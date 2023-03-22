@@ -50,16 +50,26 @@ async function getDispositivos() {
     message: "Se ha terminado el ciclo",
   });
   const fechaFin = moment(new Date()).format("YYYY-MM-DD HH:mm:ss");
-  console.log("\n\n****** - T E R M I N A D O - ******", fechaFin);
+  console.log("\n\n****** - T E R M I N A D O - ******"+ "inicio: "+fechaEjecucion+" fin: "+fechaFin);
 }
 
 // *******************************************************
 // *******************************************************
 //Se ejecuta a las x de la mañana de cada dia
-cron.schedule("0 7 * * *", () => {
+cron.schedule("30 7 * * *", () => {
   console.log("\n** Se está ejecutando cada día a las x **");
   getDispositivos();
 });
+// *******************************************************
+// *******************************************************
+
+// *******************************************************
+// *******************************************************
+//Se ejecuta a las x de la mañana de cada dia
+// cron.schedule("0 10 * * *", () => {
+//   console.log("\n** Se está ejecutando cada día a las x **");
+//   getDispositivos();
+// });
 // *******************************************************
 // *******************************************************
 
@@ -69,16 +79,16 @@ cron.schedule("0 7 * * *", () => {
 //que no procesaron el día y deben seguir procesando. Este ciclo demora aproximadamente
 //una hora y tipo 10 o 11 de la mañana se debe descomentar la línea 73 y correr el programa.
 //para posterior activar la ejecución cada x minutos, esto puede variar entre 15 y 20 min (línea 79)
-console.log("\n** Se está ejecutando solo **");
-//getDispositivos();
+// console.log("\n** Se está ejecutando solo **");
+// getDispositivos();
 // *******************************************************
 
 // *******************************************************
 // *******************************************************
 //Se ejecuta cada x minutos
-cron.schedule("*/15 * * * *", () => {
-  console.log("\n** Se está ejecutando cada x minutos **");
-  getDispositivos();
-});
+// cron.schedule("*/15 12-23 * * *", () => {
+//   console.log("\n** Se está ejecutando cada x minutos **");
+//   getDispositivos();
+// });
 // *******************************************************
 // *******************************************************

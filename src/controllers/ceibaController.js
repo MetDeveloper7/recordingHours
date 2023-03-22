@@ -91,7 +91,7 @@ const callAPIExit = async (data) => {
         );
       }
 
-      if (conditionRepeat === 3) {
+      if (conditionRepeat == 3) {
         if (checkDateDB) {
           dayParams = moment(fechaInicio)
             .startOf("day")
@@ -109,8 +109,8 @@ const callAPIExit = async (data) => {
 
           while (
             conditionNewDay < 30 &&
-            respuesta.errorcode === 200 &&
-            respuesta.data.length === 0
+            respuesta.errorcode == 200 &&
+            respuesta.data.length == 0
           ) {
             if (new Date(maxBaseDatos) < new Date(fechaInicio)) {
               dayParams = moment(dayParams)
