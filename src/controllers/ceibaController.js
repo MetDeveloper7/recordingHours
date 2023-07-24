@@ -4,7 +4,7 @@ const { searchDateVehicle } = require("../controllers/consulta");
 const { pool } = require("../config/database");
 
 const formatString = "YYYY-MM-DD HH:mm:ss";
-const fechaInicio = "2023-01-01 00:00:00";
+const fechaInicio = "2023-07-01 00:00:00";
 const fechaLimite = moment(new Date())
   .endOf("day")
   .subtract("2", "days")
@@ -76,11 +76,11 @@ const callAPIExit = async (data) => {
 
       while (
         conditionRepeat < 3 &&
-        respuesta.errorcode === 200 &&
-        respuesta.data.length === 0
+        respuesta.errorcode == 200 &&
+        respuesta.data.length == 0
       ) {
         respuesta = await saveRecording(dayParams, terid);
-        if (respuesta.errorcode === 200 && respuesta.data.length === 0) {
+        if (respuesta.errorcode == 200 && respuesta.data.length == 0) {
           await timeout(10000);
           conditionRepeat++;
         } else {
@@ -100,7 +100,7 @@ const callAPIExit = async (data) => {
         } else {
           dayParams = moment(max)
             .startOf("day")
-            .add("2", "days")
+            .add("1", "days")
             .format(formatString);
         }
         if (new Date(dayParams) < new Date(fechaLimite)) {
@@ -120,13 +120,13 @@ const callAPIExit = async (data) => {
             } else {
               dayParams = moment(dayParams)
                 .startOf("day")
-                .add("2", "days")
+                .add("1", "days")
                 .format(formatString);
             }
             if (new Date(dayParams) > new Date(fechaLimite)) break;
 
             respuesta = await saveRecording(dayParams, terid);
-            if (respuesta.errorcode === 200 && respuesta.data.length === 0) {
+            if (respuesta.errorcode == 200 && respuesta.data.length == 0) {
               await timeout(10000);
               conditionNewDay++;
             } else {

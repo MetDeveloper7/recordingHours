@@ -22,7 +22,6 @@ const searchDateVehicle = async (date, terid) => {
 }
 
 const getVehicles = async (req, res) => {
-
     const response = await pool.query("SELECT work_mvr, internal_code FROM public.vehicles")
 
     return response.rows

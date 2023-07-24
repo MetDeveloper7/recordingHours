@@ -26,9 +26,9 @@ async function getDispositivos() {
   );
 
   const [vehiculos, registros] = await Promise.all([getVehicles(), getData()]);
-
+  console.log(vehiculos.length, registros.length)
   for await (const vehiculo of vehiculos) {
-    let finVehicle = [];
+    let finVehicle = []; 
     let registroEncontrado = null;
     for (const registro of registros) {
       if (!(vehiculo.work_mvr == registro.terid)) {
@@ -41,7 +41,7 @@ async function getDispositivos() {
     const resultado = finVehicle.includes(true);
     if (resultado) {
       await callAPIExit(registroEncontrado);
-    } else {
+    } else {  
       await callAPI(vehiculo);
     }
   }
@@ -55,24 +55,21 @@ async function getDispositivos() {
 
 // *******************************************************
 // *******************************************************
-//Se ejecuta a las x de la mañana de cada dia
-cron.schedule("30 7 * * *", () => {
+// Se ejecuta a las x de la mañana de cada dia
+cron.schedule("0 6 * * *", () => {
   console.log("\n** Se está ejecutando cada día a las x **");
+  getDispositivos();
+});
+
+cron.schedule("0 10 * * *", () => {
+//   console.log("\n** Se está ejecutando cada día a las x **");
   getDispositivos();
 });
 // *******************************************************
 // *******************************************************
 
-// *******************************************************
-// *******************************************************
-//Se ejecuta a las x de la mañana de cada dia
-// cron.schedule("0 10 * * *", () => {
-//   console.log("\n** Se está ejecutando cada día a las x **");
-//   getDispositivos();
-// });
-// *******************************************************
-// *******************************************************
 
+// *******************************************************
 // *******************************************************
 //Despues de ejecutarse una vez a las x de la mañana, es necesario
 //ejecutarlo unas cuantas veces más porque hay algunos vehículos (terid)
@@ -80,15 +77,15 @@ cron.schedule("30 7 * * *", () => {
 //una hora y tipo 10 o 11 de la mañana se debe descomentar la línea 73 y correr el programa.
 //para posterior activar la ejecución cada x minutos, esto puede variar entre 15 y 20 min (línea 79)
 // console.log("\n** Se está ejecutando solo **");
-// getDispositivos();
+getDispositivos();
 // *******************************************************
 
 // *******************************************************
 // *******************************************************
 //Se ejecuta cada x minutos
-// cron.schedule("*/15 12-23 * * *", () => {
-//   console.log("\n** Se está ejecutando cada x minutos **");
-//   getDispositivos();
-// });
+cron.schedule("*/60 12-23 * * *", () => {
+  console.log("\n** Se está ejecutando cada x minutos **");
+  getDispositivos(); 
+});
 // *******************************************************
 // *******************************************************
