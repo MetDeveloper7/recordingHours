@@ -11,7 +11,8 @@ const { callAPI, callAPIExit } = require("./controllers/ceibaController");
 const { getGPS, getAllDevicesGPS } = require("./controllers/GPS/GPSController");
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended
+  : false }));
 app.use(cors());
 app.use(require("./routes/index"));
 
@@ -44,7 +45,7 @@ async function getDispositivos() {
     } else {  
       await callAPI(vehiculo);
     }
-  }
+  } 
   notifier.notify({
     title: "*/*/*/HG/*/*/*",
     message: "Se ha terminado el ciclo",
@@ -60,6 +61,7 @@ cron.schedule("0 6 * * *", () => {
   console.log("\n** Se está ejecutando cada día a las x **");
   getDispositivos();
 });
+
 
 cron.schedule("0 10 * * *", () => {
 //   console.log("\n** Se está ejecutando cada día a las x **");
@@ -89,3 +91,4 @@ cron.schedule("*/60 12-23 * * *", () => {
 });
 // *******************************************************
 // *******************************************************
+

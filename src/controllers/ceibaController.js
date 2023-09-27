@@ -4,7 +4,7 @@ const { searchDateVehicle } = require("../controllers/consulta");
 const { pool } = require("../config/database");
 
 const formatString = "YYYY-MM-DD HH:mm:ss";
-const fechaInicio = "2023-07-01 00:00:00";
+const fechaInicio = "2023-09-01 00:00:00";
 const fechaLimite = moment(new Date())
   .endOf("day")
   .subtract("2", "days")
